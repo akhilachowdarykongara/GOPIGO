@@ -1,48 +1,71 @@
-# 🤖 GoPiGo3 Autonomous Robot with Obstacle Avoidance & Voice Feedback
+# 🤖 Smart GoPiGo3 Robot System
 
-This project brings to life a **self-aware, responsive GoPiGo3 robot** powered by Python, equipped with intelligent obstacle detection, audible feedback, and autonomous navigation. The robot uses a distance sensor to monitor its path, reacts to obstacles by rerouting itself, and announces its decisions via a speaker using `espeak`. A button interface is included to halt the robot at any time, ensuring safety and control.
+Welcome to the **Smart GoPiGo3 Robotics Suite**, an advanced Raspberry Pi-based robotic system powered by Python, computer vision, and sensor intelligence. This repository showcases a multi-threaded, AI-enhanced robot capable of:
 
----
+- Real-time object detection with OpenCV and scikit-learn.
+- Distance-based navigation with obstacle avoidance.
+- Voice feedback and alerts using `espeak` and a buzzer.
+- Seamless image and video capture with PiCamera.
+- Autonomous decision-making with safety thresholds.
 
-## 🚀 Key Features
+## 📸 Features
 
-- 🔄 **Autonomous Navigation**  
-  Moves forward and intelligently responds to nearby obstacles with randomized maneuvers.
+### 1. **Vision System**
+- Uses PiCamera to capture images and video at runtime.
+- Applies KMeans clustering to identify a target color (e.g., white).
+- Estimates distance from detected objects using area-based heuristics.
+- Annotates processed frames with bounding boxes and distance overlays.
 
-- 📏 **Real-Time Obstacle Detection**  
-  Utilizes an I2C distance sensor to detect objects within a configurable threshold (default: 100mm).
+### 2. **Obstacle Avoidance**
+- Continuously reads from multiple distance sensors (center, left, right).
+- Automatically reroutes on detecting close-range obstacles.
+- Moves strategically forward, backward, or turns based on distance readings.
 
-- 🔈 **Voice Feedback**  
-  Uses `espeak` to vocalize actions like "Moving forward", "Turning left", and more via system audio.
+### 3. **Speech and Alerts**
+- Verbally announces robot actions (`espeak`) like "Moving forward", "Turning left".
+- Buzzer alerts are triggered during directional changes or obstacle events.
+- Button press acts as an emergency stop mechanism.
 
-- 📣 **Auditory Alerts**  
-  Buzzer emits beeps during directional changes and warnings.
+### 4. **Threaded Architecture**
+- Separate threads for:
+  - Image processing (vision).
+  - Navigation and movement logic.
+- Thread-safe image queue using `queue.Queue` and `threading.Lock`.
 
-- ⏹️ **Manual Stop Button**  
-  A physical button allows safe interruption and halting of robot activity.
+## 🚀 How It Works
 
-- 🛠️ **Robust Error Handling**  
-  Distance sensor reads and hardware calls are wrapped in exception handling for stability.
+1. **Initialization**:
+   - GoPiGo3, sensors (I2C/AD), camera, and peripherals are initialized.
+   - A directory for storing video (`robot_images`) is created if not present.
 
----
+2. **Processing Loop**:
+   - Camera starts capturing frames.
+   - Frames are enqueued to a vision processing thread.
+   - KMeans clustering detects target colors and estimates distance.
+   - Based on color and proximity, movement logic executes appropriate responses.
 
-## 🧩 Hardware Components
+3. **Safety Checks**:
+   - If the robot approaches an object too closely, it reroutes and announces its movement.
+   - Button can be used to stop robot operation immediately.
 
-- [GoPiGo3 Robot Base](https://www.dexterindustries.com/gopigo3/)
-- Distance Sensor (I2C)
-- Buzzer Module (Connected to AD2)
-- Button Sensor (Connected to AD1)
-- Servo Motor (Connected to SERVO2)
-- Speaker (for `espeak` output)
+## 🧠 Tech Stack
 
----
+| Technology        | Purpose                                 |
+|------------------|-----------------------------------------|
+| Python 3          | Main programming language               |
+| PiCamera          | Image and video capture                 |
+| OpenCV + PIL      | Image processing and annotation         |
+| KMeans (sklearn)  | Color clustering and detection          |
+| EasyGoPiGo3       | GoPiGo3 motor and sensor interface      |
+| Espeak            | Voice feedback engine                   |
+| ffmpeg (optional) | For video format conversion             |
+| threading/queue   | Multi-threaded data processing          |
 
-## 🛠️ Installation & Setup
-
-### 🔧 Dependencies
-
-Install required packages before running the script:
+## 📂 Project Structure
 
 ```bash
-sudo apt-get update
-sudo apt-get install espeak alsa-utils
+.
+├── Camera.py               # Basic PiCamera test script
+├── video.py                # Full-featured image processing and navigation script
+├── obstacle_voice_bot.py   # Voice-controlled robot with button + sensor logic
+└── README.md               # You're here!
